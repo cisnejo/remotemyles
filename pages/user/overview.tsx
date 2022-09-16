@@ -60,11 +60,11 @@ const Overview: NextPage = () => {
       data.map((dayData) => {
         const warmup_weights = dayData.movement_data.warmup
           .flatMap((q) => `${q.weight}/${q.reps},`)
-          .join("");
+          .join(" ");
 
         const working_weights = dayData.movement_data.working
           .flatMap((a) => `${a.weight}/${a.reps},`)
-          .join("");
+          .join(" ");
 
         return [
           dayData.movement_data.movement_name,
