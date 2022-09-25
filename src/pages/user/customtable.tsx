@@ -21,16 +21,11 @@ const apiData = [
     day: "1",
     movement_data: {
       movement_name: "clean and jerk",
-      warmup: [
-        { id: "8", order: "1", reps: "3", weight: "40" },
-        { id: "9", order: "2", reps: "3", weight: "55" },
-        { id: "10", order: "3", reps: "3", weight: "62" },
-        { id: "11", order: "4", reps: "2", weight: "67" },
-      ],
+      warmup: { id: 0, sets: "bar, 30/2, 40/2, 45/2, 50/2" },
       working: [
-        { id: "12", order: "1", reps: "2", weight: "72" },
-        { id: "13", order: "2", reps: "2", weight: "76" },
-        { id: "14", order: "3", reps: "2", weight: "80" },
+        { id: "1", set: "55/2" },
+        { id: "2", set: "55/2" },
+        { id: "3", set: "55/2" },
       ],
     },
   },
@@ -41,37 +36,48 @@ const apiData = [
     day: "2",
     movement_data: {
       movement_name: "snatch",
-      warmup: [
-        { id: "1", order: "1", reps: "3", weight: "30" },
-        { id: "2", order: "2", reps: "3", weight: "40" },
-        { id: "3", order: "3", reps: "3", weight: "45" },
-        { id: "4", order: "4", reps: "2", weight: "50" },
-      ],
+      warmup: { id: 0, sets: "bar, 30/2, 40/2, 45/2, 50/2" },
       working: [
-        { id: "3", order: "1", reps: "2", weight: "55" },
-        { id: "6", order: "2", reps: "2", weight: "55" },
-        { id: "7", order: "3", reps: "2", weight: "55" },
-        { id: "8", order: "3", reps: "2", weight: "55" },
-        { id: "9", order: "3", reps: "2", weight: "55" },
-        { id: "10", order: "3", reps: "2", weight: "55" },
+        { id: "1", set: "55/3" },
+        { id: "2", set: "55/3" },
+        { id: "3", set: "55/3" },
+
       ],
     },
   },
 ];
 
 function reducer(state: any, action: any) {
+  let idArray = action.input.split('-');
+  let programId = idArray[0];
+  let setId = idArray[1];
+
+  let currentProgram = apiData.find(program => {
+    return program.id = idArray[0]
+  })
+
+  //if it's  warmup weight
+  if (setId === "0") {
+  }
+  // else if it's a working weight
+  else {
+    console.log(currentProgram?.movement_data.working[setId])
+  }
+
+
   return { ...state, [action.input]: action.value };
 }
 
 const CustomTable: NextPage = () => {
   const [isLoading, setIsLoading] = useState(true);
-  const [state, dispatch] = useReducer(reducer, {});
+  const [state, dispatch] = useReducer(reducer, apiData);
   //const [data, setData] = useState<RowData[]>([]);
   const [data, setData] = useState([] as any);
 
   useEffect(() => {
     FakeTimeout(0);
-  }, []);
+    //console.log(state)
+  }, [state]);
 
   function FakeTimeout(timeout: number) {
     setTimeout(() => {
@@ -82,6 +88,7 @@ const CustomTable: NextPage = () => {
 
   function InputHandleChange(e: any) {
     const action = {
+      key: e.target.key,
       input: e.target.name,
       value: e.target.value,
     };
@@ -106,22 +113,20 @@ const CustomTable: NextPage = () => {
               <tr key={program.id}>
                 <td>{program.movement_data.movement_name}</td>
                 <td>
-                  {program.movement_data.warmup.map((weight_reps) => {
-                    return (
-                      <input
-                        name={weight_reps.id}
-                        defaultValue={`${weight_reps.weight}/${weight_reps.reps}`}
-                        onChange={InputHandleChange}
-                      />
-                    );
-                  })}
+
+                  <input key={program.id + "-" + program.movement_data.warmup.id}
+                    name={program.id + "-" + program.movement_data.warmup.id}
+                    defaultValue={`${program.movement_data.warmup.sets}`}
+                    onChange={InputHandleChange}
+                  />
+
                 </td>
                 <td>
                   {program.movement_data.working.map((weight_reps) => {
                     return (
-                      <input
-                        name={weight_reps.id}
-                        defaultValue={`${weight_reps.weight}/${weight_reps.reps}`}
+                      <input key={program.id + "-" + weight_reps.id}
+                        name={program.id + "-" + weight_reps.id}
+                        defaultValue={`${weight_reps.set}`}
                         onChange={InputHandleChange}
                       />
                     );
